@@ -16,8 +16,7 @@ const app = express()
 
 // This is the default address for MongoDB.
 // Make sure MongoDB is running!
-const mongoEndpoint =
-  'mongodb+srv://jadenchu14:Zhupeihao123!@peihaomongo.onflnzf.mongodb.net/twitter?retryWrites=true&w=majority'
+const mongoEndpoint = 'xxx'
 // useNewUrlParser is not required, but the old parser is deprecated
 mongoose.connect(mongoEndpoint, { useNewUrlParser: true })
 
