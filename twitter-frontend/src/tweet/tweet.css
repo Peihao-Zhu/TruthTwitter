@@ -1,0 +1,9 @@
+.container {
+  width: 80%;
+  padding: 0 auto;
+}
+
+.itemCenter {
+  display: flex;
+  justify-content: center;
+}

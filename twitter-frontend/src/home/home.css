@@ -1,0 +1,19 @@
+.homeContainer {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  /* width: 80vw; */
+  margin: 0 auto;
+  margin-top: 32px;
+  margin-bottom: 32px;
+  width: 80%;
+}
+
+@media (max-width: 767px) {
+  .homeContainer {
+    padding: 16px;
+    width: 80%;
+    flex-direction: column;
+    margin-top: 0;
+  }
+}

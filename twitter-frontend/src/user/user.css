@@ -1,0 +1,50 @@
+/* .profile-contianer {
+  display: flex;
+} */
+.profile-upper {
+  display: flex;
+  flex-direction: column;
+  /* position: relative; */
+}
+.profile-background-img {
+  width: 100%;
+  height: 500px;
+  /* position: relative; */
+  z-index: 1;
+}
+.profile-avatar {
+  /* width: 80px;
+    height: 80px; */
+}
+.profile-edit {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  top: -20px;
+  z-index: 2;
+}
+
+.edit-button {
+  margin-top: 20px;
+  right: 10px;
+}
+
+.tweetContainer {
+  display: flex;
+  justify-content: center;
+  width: 80vw;
+  margin: 0 auto;
+  margin-top: 60px;
+  margin-bottom: 32px;
+  /* top: 50px;
+  position: relative; */
+}
+
+@media (max-width: 767px) {
+  .tweetContainer {
+    width: 100vw;
+    padding: 16px;
+    flex-direction: column;
+    margin-top: 0;
+  }
+}

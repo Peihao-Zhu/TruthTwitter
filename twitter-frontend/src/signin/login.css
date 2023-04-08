@@ -1,0 +1,22 @@
+.errorMessage {
+  color: red;
+  text-align: center;
+  bottom: -80px;
+  position: relative;
+}
+
+.login-form {
+  max-width: 300px;
+  margin-top: 10%;
+  margin-left: 40%;
+  margin-right: 40%;
+}
+.login-form-forgot {
+  float: right;
+}
+.ant-col-rtl .login-form-forgot {
+  float: left;
+}
+.login-form-button {
+  width: 100%;
+}

@@ -1,0 +1,14 @@
+.signup-form {
+  margin-top: 10%;
+  margin-left: 20%;
+  margin-right: 20%;
+  max-width: 600;
+}
+
+.phone-number-input {
+  width: '100%';
+}
+
+.selector {
+  width: 70;
+}

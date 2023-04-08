@@ -1,0 +1,45 @@
+.header {
+  display: flex;
+  height: 70px;
+  align-items: center;
+  justify-content: space-around;
+  flex-basis: content;
+  background-color: #ffffff;
+}
+a {
+  text-decoration: none;
+}
+.homePage {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 30%;
+  height: 100%;
+}
+
+.navLink {
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+  color: #828282;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLink.active {
+  color: #2f80ed;
+}
+
+@media (max-width: 767px) {
+  .header {
+    height: 50px;
+    justify-content: space-between;
+  }
+}

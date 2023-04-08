@@ -1,0 +1,26 @@
+{
+  "name": "twitter-backend",
+  "version": "1.0.0",
+  "description": "API and backend service development",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon ./server.js ",
+    "devstart": "concurrently \"nodemon ./server.js\" \"react-scripts start\"",
+    "start": "node ./server.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "author": "Peihao Zhu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.37.0",
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.22"
+  },
+  "proxy": "http://localhost:3080"
+}
