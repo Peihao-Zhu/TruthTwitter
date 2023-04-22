@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import './post.css'
-// import Comment from '../comment/comment'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import axios from 'axios'
@@ -30,6 +29,7 @@ const Post = (props) => {
     const url = baseUrl + `/api/tweet/${props.post_id}`
     const tweetData = {
       content: tweetContent,
+      userId: props.userId,
     }
     axios({
       method: 'put',
@@ -51,9 +51,11 @@ const Post = (props) => {
 
   const handleDelete = () => {
     const url = baseUrl + `/api/tweet/${props.post_id}`
+    const data = {userId: props.userId}
     axios({
       method: 'delete',
       url: url,
+      data: data,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -63,8 +65,6 @@ const Post = (props) => {
       })
       .catch((err) => {
         setDeleteTweet(false)
-        // setError(true)
-        // setLoading(false)
       })
   }
 

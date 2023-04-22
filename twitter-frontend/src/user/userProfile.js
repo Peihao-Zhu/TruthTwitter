@@ -12,7 +12,6 @@ function UserProfile(props) {
   const [bio, setBio] = useState()
   // a hook to access dynamic parameters in the URL
   const userId = props.userId
-  //   const [youfollow, setYoufollow] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [formattedDate, setFormattedDate] = useState(null)
@@ -69,7 +68,7 @@ function UserProfile(props) {
               </p> */}
             </div>
             <p className="about">
-              {bio === null ? 'Hi man, please add something to your bio!' : bio}
+              {(bio === null || bio === '' ) ? 'Hi man, please add something to your bio!' : bio}
             </p>
           </div>
         </>

@@ -26,16 +26,6 @@ function Tweets(props) {
 
   // question: always call twice!!!!?????
   useEffect(() => {
-    console.log(
-      'get tweets' +
-        props.userId +
-        ' ' +
-        deleteTweet +
-        ' ' +
-        props.postTweet +
-        '  ' +
-        editTweet,
-    )
     setLoading(true)
     const userId = props.userId
     let url = baseUrl + `/api/tweet/all`
@@ -51,24 +41,19 @@ function Tweets(props) {
       // },
     })
       .then((res) => {
-        // console.log(res)
         setTweets(res.data)
         setLoading(false)
         if (deleteTweet === true) {
           setDeleteTweet(null)
-          console.log('delete tweets')
         }
         if (editTweet === true) {
           setEditTweet(null)
-          console.log('edit tweets')
         }
         if (props.hasOwnProperty('setPostTweet')) {
           props.setPostTweet(false)
-          console.log('postTweets')
         }
       })
       .catch((err) => {
-        console.log(err)
         setError(true)
         setLoading(false)
       })
