@@ -37,6 +37,7 @@ a {
   color: #2f80ed;
 }
 
+
 @media (max-width: 767px) {
   .header {
     height: 50px;

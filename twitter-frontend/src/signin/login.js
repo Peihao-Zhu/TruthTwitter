@@ -1,13 +1,14 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Form, Input } from 'antd'
-import './login.css'
-import * as actions from '../action/action'
-import { connect } from 'react-redux'
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, Input } from "antd";
+import "./login.css";
+import * as actions from "../action/action";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 function LoginPage(props) {
   const onFinish = (values) => {
-    props.signin(values.username, values.password)
-  }
+    props.signin(values.username, values.password);
+  };
   return (
     <div>
       {props.error === null ? null : (
@@ -26,7 +27,7 @@ function LoginPage(props) {
           rules={[
             {
               required: true,
-              message: 'Please input your Username!',
+              message: "Please input your Username!",
             },
           ]}
         >
@@ -40,7 +41,7 @@ function LoginPage(props) {
           rules={[
             {
               required: true,
-              message: 'Please input your Password!',
+              message: "Please input your Password!",
             },
           ]}
         >
@@ -55,9 +56,9 @@ function LoginPage(props) {
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
-          <a className="login-form-forgot" href="">
+          {/* <a className="login-form-forgot" href="">
             Forgot password
-          </a>
+          </a> */}
         </Form.Item>
 
         <Form.Item>
@@ -68,26 +69,26 @@ function LoginPage(props) {
           >
             Log in
           </Button>
-          Or <a href="">sign up now!</a>
+          Or <Link to="/signup">sign up now!</Link>
         </Form.Item>
       </Form>
     </div>
-  )
+  );
 }
 
 const mapStateToProps = (state) => {
   return {
     error: state.error,
     loading: state.loading,
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     signin: (username, password) =>
       dispatch(actions.signin(username, password)),
-    onResetError: () => dispatch({ type: 'RESET_ERROR' }),
-  }
-}
+    onResetError: () => dispatch({ type: "RESET_ERROR" }),
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

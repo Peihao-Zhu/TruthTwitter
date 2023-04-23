@@ -1,9 +1,7 @@
-import { Button, Form, Input, Select } from 'antd'
-import './signup.css'
-import { connect } from 'react-redux'
-import * as actions from '../action/action'
-
-const { Option } = Select
+import { Button, Form, Input } from "antd";
+import "./signup.css";
+import { connect } from "react-redux";
+import * as actions from "../action/action";
 
 const formItemLayout = {
   labelCol: {
@@ -22,7 +20,7 @@ const formItemLayout = {
       span: 16,
     },
   },
-}
+};
 const tailFormItemLayout = {
   wrapperCol: {
     xs: {
@@ -34,13 +32,13 @@ const tailFormItemLayout = {
       offset: 8,
     },
   },
-}
+};
 
 function Signup(props) {
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
   const onFinish = (values) => {
-    props.signup(values)
-  }
+    props.signup(values);
+  };
   // const prefixSelector = (
   //   <Form.Item name="prefix" noStyle>
   //     <Select className="selector">
@@ -58,7 +56,7 @@ function Signup(props) {
       name="register"
       onFinish={onFinish}
       initialValues={{
-        prefix: '1',
+        prefix: "1",
       }}
       scrollToFirstError
     >
@@ -67,12 +65,12 @@ function Signup(props) {
         label="E-mail"
         rules={[
           {
-            type: 'email',
-            message: 'The input is not valid E-mail!',
+            type: "email",
+            message: "The input is not valid E-mail!",
           },
           {
             required: true,
-            message: 'Please input your E-mail!',
+            message: "Please input your E-mail!",
           },
         ]}
       >
@@ -85,7 +83,7 @@ function Signup(props) {
         rules={[
           {
             required: true,
-            message: 'Please input your password!',
+            message: "Please input your password!",
           },
         ]}
         hasFeedback
@@ -96,21 +94,21 @@ function Signup(props) {
       <Form.Item
         name="confirm"
         label="Confirm Password"
-        dependencies={['password']}
+        dependencies={["password"]}
         hasFeedback
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
+            message: "Please confirm your password!",
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve()
+              if (!value || getFieldValue("password") === value) {
+                return Promise.resolve();
               }
               return Promise.reject(
-                new Error('The two passwords that you entered do not match!'),
-              )
+                new Error("The two passwords that you entered do not match!")
+              );
             },
           }),
         ]}
@@ -125,7 +123,7 @@ function Signup(props) {
         rules={[
           {
             required: true,
-            message: 'Please input your nickname!',
+            message: "Please input your nickname!",
             whitespace: true,
           },
         ]}
@@ -138,7 +136,7 @@ function Signup(props) {
         label="Bio"
         rules={[
           {
-            message: 'About me',
+            message: "About me",
             whitespace: true,
           },
         ]}
@@ -151,7 +149,7 @@ function Signup(props) {
         label="Website"
         rules={[
           {
-            message: 'Please input your website!',
+            message: "Please input your website!",
             whitespace: true,
           },
         ]}
@@ -178,20 +176,20 @@ function Signup(props) {
         </Button>
       </Form.Item>
     </Form>
-  )
+  );
 }
 const mapStateToProps = (state) => {
   return {
     error: state.error,
     loading: state.loading,
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     signup: (data) => dispatch(actions.signup(data)),
-    onResetError: () => dispatch({ type: 'RESET_ERROR' }),
-  }
-}
+    onResetError: () => dispatch({ type: "RESET_ERROR" }),
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Signup)
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

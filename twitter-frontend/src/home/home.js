@@ -1,11 +1,11 @@
-import CreateTweet from '../tweet/createTweet'
-import './home.css'
-import Tweet from '../tweet/tweet'
-import { connect } from 'react-redux'
-import { useState, useEffect } from 'react'
+import CreateTweet from "../tweet/createTweet";
+import "./home.css";
+import Tweet from "../tweet/tweet";
+import { connect } from "react-redux";
+import { useState } from "react";
 
 function HomePage(props) {
-  const [postTweet, setPostTweet] = useState(false)
+  const [postTweet, setPostTweet] = useState(false);
   return (
     <div className="homeContainer">
       {props.auth ? <CreateTweet setPostTweet={setPostTweet} /> : null}
@@ -13,16 +13,16 @@ function HomePage(props) {
         userId={null}
         postTweet={postTweet}
         setPostTweet={setPostTweet}
-        from={'home'}
+        from={"home"}
       />
     </div>
-  )
+  );
 }
 
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, null)(HomePage)
+export default connect(mapStateToProps, null)(HomePage);

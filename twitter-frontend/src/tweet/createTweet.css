@@ -65,8 +65,15 @@ div.tweetbox {
 }
 
 .tweetImageIcon {
+  font-size: 20px;
   margin-right: 12px;
   color: #2f80ed;
+}
+.createTweetImage {
+  display: block;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* .newtweetIcons > div p {

@@ -1,14 +1,9 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import './profile.css'
-import ProfileDropdown from './pofileDropDown'
-import { CarFilled } from '@ant-design/icons'
-import '../header/header.css'
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import "./profile.css";
+import "../header/header.css";
 
 function Profile(props) {
-  const [showDropdown, setshowDropdown] = useState(false)
-
   return (
     <div className="editProfile">
       <p>Personal info</p>
@@ -21,7 +16,11 @@ function Profile(props) {
         </div>
         <div className="profileDiv">
           <p>Avatar</p>
-          <img src={props.imageURL} className="editProfileImage" />
+          <img
+            src={props.imageURL}
+            alt="avatar of user"
+            className="editProfileImage"
+          />
         </div>
         <div className="profileDiv">
           <p>Name</p>
@@ -45,7 +44,7 @@ function Profile(props) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const mapStateToProps = (state) => {
@@ -58,7 +57,7 @@ const mapStateToProps = (state) => {
     message: state.message,
     phone: state.phone,
     website: state.website,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, null)(Profile)
+export default connect(mapStateToProps, null)(Profile);

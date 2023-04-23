@@ -46,6 +46,8 @@
   line-height: 22px;
   color: #4f4f4f;
   margin-bottom: 16px;
+  display: flex;
+  flex-flow: column wrap;
 }
 
 .postImage {
@@ -85,6 +87,11 @@
   color: #eb5757;
 }
 
+.tweetFile { 
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
 /* 
 .engagementLinks {
   position: relative;

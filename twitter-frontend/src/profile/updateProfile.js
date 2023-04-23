@@ -4,13 +4,6 @@ import { Modal, Upload } from "antd";
 import "./updateProfile.css";
 import { connect } from "react-redux";
 import * as actions from "../action/action";
-import S3 from "aws-sdk/clients/s3";
-import { ACCESS_KEY_ID, SECRET_ACCESS_KEY } from "../config/config";
-
-const s3 = new S3({
-  accessKeyId: ACCESS_KEY_ID,
-  secretAccessKey: SECRET_ACCESS_KEY,
-});
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -21,7 +14,6 @@ const getBase64 = (file) =>
   });
 
 function UpdateProfilePage(props) {
-  const UserImage = props.imageURL;
   const [fileList, setFileList] = useState([
     {
       name: "image.png",
@@ -40,35 +32,33 @@ function UpdateProfilePage(props) {
     email: props.email,
     website: props.website,
   });
-  const [error, setError] = useState();
-  const [message, setMessage] = useState(props.message);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [imageURL, setImageURL] = useState(props.imageURL);
-  const [loading, setLoading] = useState(false);
-
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-
-  const setshowDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
 
   const handleImgChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
 
   const handleCustomRequest = async (options) => {
+    const now = new Date();
+    const dateTimeString = now.getTime();
+    const fileKey =
+      "user/" +
+      props.username +
+      "/" +
+      props.userId +
+      "/" +
+      dateTimeString +
+      "_" +
+      options.file.name;
     try {
       // upload the file to Amazon S3
-      const result = await s3
-        .upload({
-          Bucket: "twitter-user-image",
-          Key: options.file.name,
-          Body: options.file,
-        })
-        .promise();
-
+      const result = await actions.uploadImgToAWSS3(
+        "twitter-user-image",
+        fileKey,
+        options.file
+      );
       // indicate that the upload was successful
       options.onSuccess(result);
       setData({
@@ -76,9 +66,7 @@ function UpdateProfilePage(props) {
         profileImage: result.Location,
       });
     } catch (error) {
-      // indicate that an error occurred
-      // options.onError(error);
-      setError(error);
+      options.onerror(error);
     }
   };
 
@@ -134,35 +122,15 @@ function UpdateProfilePage(props) {
           website: event.target.value,
         });
         break;
+      default:
+        break;
     }
-  };
-  const setImage = () => {
-    const imageurl = URL.createObjectURL(data.profileImage);
-    setImageURL(imageurl);
-  };
-
-  const setImageAction = () => {
-    const formData = new FormData();
-    formData.append("file", data.profileImage);
-    setData({
-      ...data,
-      profileImage: formData,
-    });
-    // do your post request
-  };
-
-  const onImageChange = (event) => {
-    setData({
-      ...data,
-      profileImage: event.target.files[0],
-    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const button = document.querySelector("#saveDetails");
     button.disabled = true;
-    setLoading(true);
     const stateKeys = Object.keys(data);
     const formData = new FormData();
     stateKeys.map((key) => {
@@ -179,14 +147,11 @@ function UpdateProfilePage(props) {
         <div className="profileEditPrompt noborder">
           <div>
             <p>Edit Profile</p>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {message && <p style={{ color: "green" }}>{message}</p>}
           </div>
         </div>
         <>
           <Upload
             customRequest={handleCustomRequest}
-            // action= {baseUrl + '/api/user/upload'}
             listType="picture-circle"
             fileList={fileList}
             onPreview={handlePreview}
@@ -258,6 +223,7 @@ const mapStateToProps = (state) => {
     error: state.error,
     message: state.message,
     website: state.website,
+    userId: state.userId,
   };
 };
 

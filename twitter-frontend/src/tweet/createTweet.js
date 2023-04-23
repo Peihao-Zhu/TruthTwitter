@@ -1,88 +1,104 @@
-import { useState, useEffect } from 'react'
-import './createTweet.css'
-import * as actions from '../action/action'
-import { connect } from 'react-redux'
-import * as actionTypes from '../store/actionTypes'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { baseUrl } from '../config/config'
+import { useState, useEffect } from "react";
+import "./createTweet.css";
+import * as actions from "../action/action";
+import { connect } from "react-redux";
+import * as actionTypes from "../store/actionTypes";
+import axios from "axios";
+import { baseUrl } from "../config/config";
+import { FileImageOutlined } from "@ant-design/icons";
 
 function CreateTweet(props) {
-  const navigate = useNavigate()
-  const [showpermission, setShowpermission] = useState(false)
-  const [tweet, setTweet] = useState({
-    caption: null,
-    // file: null,
-  })
-  const [permission, setPermission] = useState(1)
-  const [tweetimageURL, setTweetimageURL] = useState(null)
-  const [postedTweet, setPostedTweet] = useState(null)
+  const emptyTweet = {
+    content: null,
+    fileURL: null,
+  };
+  const [tweet, setTweet] = useState(emptyTweet);
+  const [postedTweet, setPostedTweet] = useState(null);
 
   useEffect(() => {
     if (postedTweet || !postedTweet) {
-      setTimeout(() => setPostedTweet(null), 3000)
+      setTimeout(() => setPostedTweet(null), 3000);
     }
-  }, [postedTweet])
+  }, [postedTweet]);
 
   const postTweet = (event) => {
-    const button = document.querySelector('#tweetButton')
-    button.disabled = true
-    event.preventDefault()
+    // we cannot publish empty post
+    if (!tweet.content && !tweet.fileURL) return;
+    const button = document.querySelector("#tweetButton");
+    button.disabled = true;
+    event.preventDefault();
     const tweetData = {
       userId: props.userId,
-      content: tweet.caption,
+      content: tweet.content,
       username: props.username,
       userImage: props.imageURL,
-    }
-    let url = baseUrl + '/api/tweet'
+      fileURL: tweet.fileURL,
+    };
+    let url = baseUrl + "/api/tweet";
     axios({
-      method: 'post',
+      method: "post",
       url: url,
       data: tweetData,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     })
       .then((res) => {
-        button.disabled = false
-        setPostedTweet(true)
-        props.setPostTweet(true)
+        button.disabled = false;
+        setPostedTweet(true);
+        props.setPostTweet(true);
         // set the textarea to empty
-        document.getElementById('postTweetBox').value = ''
+        document.getElementById("postTweetBox").value = "";
+        setTweet(emptyTweet);
       })
       .catch((err) => {
-        setPostedTweet(false)
-        button.disabled = false
-      })
-  }
-
-  const setImage = () => {
-    const imageurl = URL.createObjectURL(tweet.file)
-    setTweetimageURL(imageurl)
-  }
+        setPostedTweet(false);
+        button.disabled = false;
+      });
+  };
 
   const onImageChange = (event) => {
-    console.log(event)
-    setTweet({
-      ...tweet,
-      file: event.target.files[0],
-    })
-  }
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const now = new Date();
+      const dateTimeString = now.getTime();
+      const fileKey =
+        "tweet/" +
+        props.username +
+        "/" +
+        props.userId +
+        "/" +
+        dateTimeString +
+        "_" +
+        file.name;
+      actions
+        .uploadImgToAWSS3("twitter-user-image", fileKey, event.target.result)
+        .then((result) => {
+          setTweet({
+            ...tweet,
+            fileURL: result.Location,
+          });
+        })
+        .catch((error) => console.log(error));
+    };
+    reader.readAsArrayBuffer(file);
+  };
 
   const handleNewTweet = (event) => {
     setTweet({
       ...tweet,
-      caption: event.target.value,
-    })
-  }
+      content: event.target.value,
+    });
+  };
 
   const handleKeyDown = (e) => {
-    e.target.style.height = 'inherit'
-    e.target.style.height = `${e.target.scrollHeight}px`
-    const limit = 100
+    e.target.style.height = "inherit";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+    const limit = 100;
     // In case you have a limitation
-    e.target.style.height = `${Math.max(e.target.scrollHeight, limit)}px`
-  }
+    e.target.style.height = `${Math.max(e.target.scrollHeight, limit)}px`;
+  };
 
   return (
     <div className="container">
@@ -95,7 +111,7 @@ function CreateTweet(props) {
       <div className="createTweet">
         <p>Tweeeeeeeeeet</p>
         <div className="newtweetInput">
-          <img className="posterImage" src={props.imageURL} />
+          <img className="posterImage" src={props.imageURL} alt="user avatar" />
           <div className="tweetbox">
             <textarea
               placeholder="Share your story with others!"
@@ -105,17 +121,33 @@ function CreateTweet(props) {
               onKeyDown={handleKeyDown}
               maxLength="250"
             />
-            <img src={tweetimageURL} width="100%" />
+            {tweet.fileURL !== null ? (
+              <img
+                src={tweet.fileURL}
+                className="createTweetImage"
+                alt="tweet file"
+              />
+            ) : null}
           </div>
         </div>
         <div className="newtweetIcons">
+          <label htmlFor="file-input">
+            <FileImageOutlined className="tweetImageIcon" />
+          </label>
+          <input
+            type="file"
+            accept="image"
+            id="file-input"
+            name="image-upload"
+            onChange={onImageChange}
+          />
           <button id="tweetButton" type="submit" onClick={postTweet}>
             Tweet
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const mapStateToProps = (state) => {
@@ -126,15 +158,15 @@ const mapStateToProps = (state) => {
     token: state.token,
     userId: state.userId,
     username: state.username,
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onSubmitTweet: (tweet) => dispatch(actions.postTweet(tweet)),
     onResetPostedTweet: () =>
       dispatch({ type: actionTypes.RESET_POSTED_TWEET }),
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateTweet)
+export default connect(mapStateToProps, mapDispatchToProps)(CreateTweet);
