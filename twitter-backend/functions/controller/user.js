@@ -5,17 +5,44 @@ const UserAccessor = require("../model/user.model");
 const TweetAccessor = require("../model/tweet.model");
 
 const bcrypt = require("bcryptjs");
+const authParser = require("../auth/auth.helper");
+const jwt = require("jsonwebtoken");
+
+router.get("/auth", authParser, (req, res) => {
+  return res.sendStatus(200);
+});
 
 router.post("/signin", (req, res) => {
-  const data = req.body;
+  const { username, password } = req.body;
   // search whether the username and password exit in mongodb
-  UserAccessor.findUserByUsername(data.username)
+  UserAccessor.findUserByUsername(username)
     .then((user) => {
-      if (user && bcrypt.compareSync(data.password, user.password)) {
-        res.status(200).send(user);
+      if (user && bcrypt.compareSync(password, user.password)) {
+        const payload = { username };
+        // JWT is encrypting our payload (which is whatever data we want
+        // to carry across sessions: in this case, just the username)
+        // into the cookie based on our SECRET
+        const token = jwt.sign(payload, process.env.SUPER_SECRET, {
+          expiresIn: "14d", // optional cookie expiration date
+        });
+        // Here we are setting the cookie on our response obect.
+        // Note that we are returning the username, but that isn't as necessary anymore
+        // unless we want to reference that on the frontend
+        return res
+          .cookie("token", token, {
+            httpOnly: true,
+            sameSite: "None",
+            secure: true,
+          })
+          .status(200)
+          .send(user);
       } else res.status(404).send("username or password wrong");
     })
     .catch((error) => console.error(`Something went wrong: ${error}`));
+});
+
+router.get("/logout", (req, res) => {
+  res.clearCookie().status(200).send("logout successfully");
 });
 
 router.post("/signup", (req, res) => {
@@ -60,7 +87,7 @@ router.get("/:userId", function (req, res) {
 /**
  * if successful, return new info about the user
  */
-router.put("/:userId/profile", function (req, res) {
+router.put("/:userId/profile", authParser, function (req, res) {
   UserAccessor.findUserById(req.params.userId)
     .then((user) => {
       if (user) {

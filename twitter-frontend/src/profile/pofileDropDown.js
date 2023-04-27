@@ -1,12 +1,13 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import './profileDropDown.css'
-import { connect } from 'react-redux'
+import React from "react";
+import { Link } from "react-router-dom";
+import "./profileDropDown.css";
+import { connect } from "react-redux";
 import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
-} from '@ant-design/icons'
+} from "@ant-design/icons";
+import * as actions from "../action/action";
 
 const ProfileDropdown = (props) => {
   return (
@@ -26,19 +27,19 @@ const ProfileDropdown = (props) => {
         Logout
       </Link>
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state) => {
   return {
     userId: state.userId,
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    logout: () => dispatch({ type: 'SET_LOGOUT' }),
-  }
-}
+    logout: () => dispatch(actions.logout()),
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileDropdown)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileDropdown);

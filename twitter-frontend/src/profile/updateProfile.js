@@ -4,6 +4,7 @@ import { Modal, Upload } from "antd";
 import "./updateProfile.css";
 import { connect } from "react-redux";
 import * as actions from "../action/action";
+import { useNavigate } from "react-router-dom";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -35,6 +36,7 @@ function UpdateProfilePage(props) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
+  const navigate = useNavigate();
 
   const handleImgChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -137,7 +139,7 @@ function UpdateProfilePage(props) {
       formData.append(key, data[key]);
     });
     // when the result is success, navigate to home or setting page!!!
-    props.onSubmit(formData);
+    props.onSubmit(formData, navigate);
   };
 
   return (
@@ -229,7 +231,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSubmit: (profileData) => dispatch(actions.saveDetails(profileData)),
+    onSubmit: (profileData, navigate) =>
+      dispatch(actions.saveDetails(profileData, navigate)),
   };
 };
 

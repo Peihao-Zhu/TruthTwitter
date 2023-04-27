@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { baseUrl } from "../config/config";
 import { Spin } from "antd";
 import "./tweet.css";
+import { useNavigate } from "react-router-dom";
+import * as actions from "../action/action";
 
 function Tweets(props) {
   const [tweets, setTweets] = useState([]);
@@ -12,6 +14,8 @@ function Tweets(props) {
   const [editTweet, setEditTweet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
 
   // display the delete successfully or error message for 3 s
   useEffect(() => {
@@ -52,9 +56,15 @@ function Tweets(props) {
           props.setPostTweet(false);
         }
       })
-      .catch((err) => {
+      .catch((error) => {
         setError(true);
         setLoading(false);
+        if (error.response.status === 401) {
+          props.setLogout();
+          navigate("/signin");
+        } else {
+          props.authFail(error.message);
+        }
       });
   }, [props.userId, deleteTweet, props.postTweet, editTweet]);
 
@@ -125,6 +135,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getTweetSuccess: () => dispatch({ type: "TWEET_SUCCESS" }),
+    authFail: (error) => dispatch(actions.authFail(error)),
+    setLogout: () => dispatch(actions.setLogout()),
   };
 };
 

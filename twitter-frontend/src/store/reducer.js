@@ -1,4 +1,4 @@
-import * as actionTypes from './actionTypes'
+import * as actionTypes from "./actionTypes";
 
 let initialState = {
   auth: false,
@@ -7,16 +7,16 @@ let initialState = {
   loading: false,
   error: null,
   imageURL:
-    'https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?w=996&t=st=1680413689~exp=1680414289~hmac=09994e8b8d18d554dfba6d1115b9aec238f478be6b79aa35dec2d618c9646573',
+    "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?w=996&t=st=1680413689~exp=1680414289~hmac=09994e8b8d18d554dfba6d1115b9aec238f478be6b79aa35dec2d618c9646573",
   bio: null,
-  username: 'please log in...',
+  username: "please log in...",
   successMessage: null,
   email: null,
   postedTweet: null,
   website: null,
   createdate: null,
   getTweets: false,
-}
+};
 
 const Reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -24,7 +24,7 @@ const Reducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-      }
+      };
     case actionTypes.AUTH_SUCCESS:
       return {
         ...state,
@@ -39,13 +39,14 @@ const Reducer = (state = initialState, action) => {
         website: action.website,
         createdate: action.createdate,
         error: null,
-      }
+      };
     case actionTypes.AUTH_FAIL:
       return {
         ...state,
+        auth: false,
         loading: false,
         error: action.error,
-      }
+      };
     case actionTypes.SAVE_SUCCESS:
       return {
         ...state,
@@ -57,45 +58,45 @@ const Reducer = (state = initialState, action) => {
         website: action.website,
         createdate: action.createdate,
         error: null,
-      }
+      };
 
     case actionTypes.RESET_POSTED_TWEET:
       return {
         ...state,
         postedTweet: null,
-      }
+      };
 
     case actionTypes.TWEET_SUCCESS:
       return {
         ...state,
         postedTweet: true,
         getTweets: false,
-      }
+      };
     case actionTypes.TWEET_FAIL:
       return {
         ...state,
         postedTweet: false,
-      }
+      };
     case actionTypes.RESET_ERROR:
       return {
         ...state,
         error: null,
-      }
+      };
     case actionTypes.SET_LOGOUT:
-      return initialState
+      return initialState;
     case actionTypes.TWEET_DELETE:
       return {
         ...state,
         getTweets: true,
-      }
+      };
     // case 'SET_COMMENT':
     //   return {
     //     ...state,
     //     commentSent: action.value,
     //   }
     default:
-      return state
+      return state;
   }
-}
+};
 
-export default Reducer
+export default Reducer;

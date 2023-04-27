@@ -10,7 +10,12 @@ const tweet = require("./controller/tweet");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+const cookieParser = require("cookie-parser");
+
+require("dotenv").config({ path: "./.env" });
+
 const app = express();
+app.use(cookieParser());
 
 // This is the default address for MongoDB.
 // Make sure MongoDB is running!
@@ -33,6 +38,9 @@ app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
   // origin: "http://localhost:3000",
+  methods: ["GET", " PUT", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
   origin: "https://peihao-twitter.web.app",
 };
 

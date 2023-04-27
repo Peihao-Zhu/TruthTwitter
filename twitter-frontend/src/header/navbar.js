@@ -1,50 +1,24 @@
 import "./navbar.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import React, { useState } from "react";
 import ProfileDropdown from "../profile/pofileDropDown";
 import { connect } from "react-redux";
 import logo from "../img/dog.jpg";
 import { Input, AutoComplete } from "antd";
-import { baseUrl } from "../config/config";
-import axios from "axios";
+import * as actions from "../action/action";
 
 function Navigation(props) {
   const [showDropdown, setshowDropdown] = useState(false);
   const [options, setOptions] = useState([]);
+  const navigate = useNavigate();
 
   const handleSearch = (value) => {
     if (!value) {
       setOptions([]);
       return;
     }
-    searchResult(value).then((options) => {
+    props.searchResult(value, navigate).then((options) => {
       setOptions(options);
-    });
-  };
-
-  const searchResult = (query) => {
-    const url = baseUrl + `/api/user/search?keyword=${query}`;
-    return axios({
-      method: "get",
-      url: url,
-    }).then((res) => {
-      return res.data.map((user, _) => {
-        return {
-          value: user.username,
-          label: (
-            <Link to={`/user/${user._id}`}>
-              <div className="userSummary">
-                <img
-                  src={user.profileImage}
-                  alt="user avatar"
-                  className="userImage"
-                />
-                <div className="username">{user.username}</div>
-              </div>
-            </Link>
-          ),
-        };
-      });
     });
   };
 
@@ -83,7 +57,11 @@ function Navigation(props) {
           options={options}
           onSearch={handleSearch}
         >
-          <Input.Search size="large" placeholder="input here" enterButton />
+          <Input.Search
+            size="large"
+            placeholder="search user here"
+            enterButton
+          />
         </AutoComplete>
       </div>
       <div
@@ -91,10 +69,7 @@ function Navigation(props) {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div
-          className="userSummary"
-          // onClick={() => setshowDropdown(props.auth ? !showDropdown : false)}
-        >
+        <div className="userSummary">
           <img src={props.imageURL} className="userImage" alt="user profile " />
           <div className="username">{props.username}</div>
         </div>
@@ -113,4 +88,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(Navigation);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    searchResult: (query, navigate) =>
+      dispatch(actions.searchResult(query, navigate)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);

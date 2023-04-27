@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import Reducer from "./store/reducer.js";
+import Reducer from "./store/reducer";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";

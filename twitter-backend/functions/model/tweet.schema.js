@@ -11,7 +11,7 @@ exports.TweetSchema = new Schema(
     userImage: String,
     content: String,
     fileURL: String,
-    // Mongoose will help us maintain createAt and updateAt and the latter one will be updated every time we edot the document
+    // Mongoose will help us maintain createAt and updateAt and the latter one will be updated every time we edit the document
   },
   { collection: "tweets", timestamps: true }
 );

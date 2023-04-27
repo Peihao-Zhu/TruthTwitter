@@ -2,6 +2,7 @@ import axios from "axios";
 import * as actionTypes from "../store/actionTypes";
 import S3 from "aws-sdk/clients/s3";
 import { baseUrl, ACCESS_KEY_ID, SECRET_ACCESS_KEY } from "../config/config";
+import { Link } from "react-router-dom";
 
 export const signin = (username, password) => {
   return (dispatch) => {
@@ -11,11 +12,11 @@ export const signin = (username, password) => {
       password: password,
     };
     const config = {
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
     };
-    // console.log('sign in ' + username + ' ' + password)
     const url = baseUrl + "/api/user/signin";
     axios
       .post(url, authData, config)
@@ -27,8 +28,26 @@ export const signin = (username, password) => {
         }
       })
       .catch((error) => {
-        dispatch(authFail(error.response.data));
+        dispatch(authFail(error.message));
       });
+  };
+};
+
+export const logout = () => {
+  return (dispatch) => {
+    let url = baseUrl + "/api/user/logout";
+    axios
+      .get(url)
+      .then(() => {
+        dispatch(setLogout());
+      })
+      .catch((error) => {});
+  };
+};
+
+export const setLogout = () => {
+  return {
+    type: "SET_LOGOUT",
   };
 };
 
@@ -58,10 +77,7 @@ export const signup = (data) => {
         }
       })
       .catch((error) => {
-        console.log(
-          "signup error " + error + " " + error.status + " " + error.message
-        );
-        dispatch(authFail(error));
+        dispatch(authFail(error.message));
       });
   };
 };
@@ -93,7 +109,7 @@ export const authSuccess = (res) => {
   };
 };
 
-export const saveDetails = (details) => {
+export const saveDetails = (details, navigate) => {
   const button = document.querySelector("#saveDetails");
   const saveDetailsResult = document.querySelector("#saveDetailsResult");
   return (dispatch, getState) => {
@@ -103,6 +119,7 @@ export const saveDetails = (details) => {
       profile[key] = value;
     }
     const config = {
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
@@ -119,13 +136,18 @@ export const saveDetails = (details) => {
         }, 3000);
       })
       .catch((error) => {
-        dispatch(authFail(error.message));
         button.disabled = false;
         saveDetailsResult.textContent = "Save Error";
         saveDetailsResult.style.color = "red";
         setTimeout(() => {
           saveDetailsResult.style.display = "none";
         }, 3000);
+        if (error.response.status === 401) {
+          dispatch(setLogout());
+          navigate("/signin");
+        } else {
+          dispatch(authFail(error.message));
+        }
       });
   };
 };
@@ -143,19 +165,107 @@ export const saveSuccess = (res) => {
   };
 };
 
-export const postTweet = (tweet) => {
-  return (dispatch, getState) => {
-    let url = "https://tweeter-8qqa.onrender.com/posts/create";
+export const searchResult = (query, navigate) => {
+  const url = baseUrl + `/api/user/search?keyword=${query}`;
+  return (dispatch) =>
     axios({
-      method: "post",
+      method: "get",
       url: url,
-      data: tweet,
+    })
+      .then((res) => {
+        return res.data.map((user, _) => {
+          return {
+            value: user.username,
+            label: (
+              <Link to={`/user/${user._id}`}>
+                <div className="userSummary">
+                  <img
+                    src={user.profileImage}
+                    alt="user avatar"
+                    className="userImage"
+                  />
+                  <div className="username">{user.username}</div>
+                </div>
+              </Link>
+            ),
+          };
+        });
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          dispatch(setLogout());
+          navigate("/signin");
+        } else {
+          dispatch(authFail(error.message));
+        }
+      });
+};
+
+export const deletePost = (postId, userId, setDeleteTweet, navigate) => {
+  return (dispatch) => {
+    const url = baseUrl + `/api/tweet/${postId}`;
+    const data = { userId: userId };
+    axios({
+      method: "delete",
+      url: url,
+      data: data,
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
     })
-      .then(dispatch({ type: actionTypes.TWEET_SUCCESS }))
-      .catch(dispatch({ type: actionTypes.TWEET_FAIL }));
+      .then(() => {
+        setDeleteTweet(true);
+      })
+      .catch((error) => {
+        setDeleteTweet(false);
+        if (error.response.status === 401) {
+          dispatch(setLogout());
+          navigate("/signin");
+        } else {
+          dispatch(authFail(error.message));
+        }
+      });
+  };
+};
+
+export const editPost = (
+  postId,
+  userId,
+  tweetContent,
+  setEditTweet,
+  navigate
+) => {
+  return (dispatch) => {
+    const url = baseUrl + `/api/tweet/${postId}`;
+    const tweetData = {
+      content: tweetContent,
+      userId: userId,
+    };
+    axios({
+      method: "put",
+      url: url,
+      data: tweetData,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        setEditTweet(true);
+      })
+      .catch((error) => {
+        setEditTweet(false);
+
+        if (error.response.status === 401) {
+          navigate("/signin");
+          dispatch(setLogout());
+        } else {
+          dispatch(authFail(error.message));
+        }
+        // setError(true)
+        // setLoading(false)
+      });
   };
 };
 

@@ -12,14 +12,14 @@ function insertTweet(Tweet) {
 }
 
 function getAllTweet() {
-  return TweetModel.find().sort({ updatedAt: -1 }).exec();
+  return TweetModel.find().sort({ createdAt: -1 }).exec();
 }
 
 function findTweetByUserId(userId) {
   return TweetModel.find({
     userId: userId,
   })
-    .sort({ updatedAt: -1 })
+    .sort({ createdAt: -1 })
     .exec();
 }
 

@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import "./createTweet.css";
 import * as actions from "../action/action";
 import { connect } from "react-redux";
-import * as actionTypes from "../store/actionTypes";
 import axios from "axios";
 import { baseUrl } from "../config/config";
 import { FileImageOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 function CreateTweet(props) {
   const emptyTweet = {
@@ -14,6 +14,7 @@ function CreateTweet(props) {
   };
   const [tweet, setTweet] = useState(emptyTweet);
   const [postedTweet, setPostedTweet] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (postedTweet || !postedTweet) {
@@ -39,6 +40,7 @@ function CreateTweet(props) {
       method: "post",
       url: url,
       data: tweetData,
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
@@ -51,9 +53,15 @@ function CreateTweet(props) {
         document.getElementById("postTweetBox").value = "";
         setTweet(emptyTweet);
       })
-      .catch((err) => {
+      .catch((error) => {
         setPostedTweet(false);
         button.disabled = false;
+        if (error.response.status === 401) {
+          props.setLogout();
+          navigate("/signin");
+        } else {
+          props.authFail(error.message);
+        }
       });
   };
 
@@ -79,8 +87,7 @@ function CreateTweet(props) {
             ...tweet,
             fileURL: result.Location,
           });
-        })
-        .catch((error) => console.log(error));
+        });
     };
     reader.readAsArrayBuffer(file);
   };
@@ -163,9 +170,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSubmitTweet: (tweet) => dispatch(actions.postTweet(tweet)),
-    onResetPostedTweet: () =>
-      dispatch({ type: actionTypes.RESET_POSTED_TWEET }),
+    authFail: (error) => {
+      dispatch(actions.authFail(error));
+    },
+    setLogout: () => {
+      dispatch(actions.setLogout());
+    },
   };
 };
 

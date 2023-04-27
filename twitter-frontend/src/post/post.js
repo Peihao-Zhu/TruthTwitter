@@ -1,68 +1,20 @@
 import { useState } from "react";
 import "./post.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import axios from "axios";
 import { EditOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
-import { baseUrl } from "../config/config";
+import * as actions from "../action/action";
 
 const Post = (props) => {
   let date = new Date(props.datetime);
-
   const [tweetContent, setTweetContent] = useState(null);
   const [showEdit, setShowEdit] = useState(true);
-
+  const setEditTweet = props.setEditTweet;
   const setDeleteTweet = props.setDeleteTweet;
 
-  const setEditTweet = props.setEditTweet;
-
+  const navigate = useNavigate();
   const handleEdit = () => {
-    console.log("edit");
     setShowEdit(false);
-  };
-
-  const handleSave = () => {
-    console.log("save");
-    const url = baseUrl + `/api/tweet/${props.post_id}`;
-    const tweetData = {
-      content: tweetContent,
-      userId: props.userId,
-    };
-    axios({
-      method: "put",
-      url: url,
-      data: tweetData,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        setEditTweet(true);
-      })
-      .catch((err) => {
-        setEditTweet(false);
-        // setError(true)
-        // setLoading(false)
-      });
-  };
-
-  const handleDelete = () => {
-    const url = baseUrl + `/api/tweet/${props.post_id}`;
-    const data = { userId: props.userId };
-    axios({
-      method: "delete",
-      url: url,
-      data: data,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        setDeleteTweet(true);
-      })
-      .catch((err) => {
-        setDeleteTweet(false);
-      });
   };
 
   const handleNewTweet = (event) => {
@@ -126,13 +78,34 @@ const Post = (props) => {
           ) : null}
 
           {!showEdit ? (
-            <div className="engageLink" onClick={handleSave}>
+            <div
+              className="engageLink"
+              onClick={() =>
+                props.editPost(
+                  props.post_id,
+                  props.userId,
+                  tweetContent,
+                  setEditTweet,
+                  navigate
+                )
+              }
+            >
               <SaveOutlined />
               <p style={{ fontSize: "14px" }}>Save</p>
             </div>
           ) : null}
 
-          <div className="engageLink" onClick={handleDelete}>
+          <div
+            className="engageLink"
+            onClick={() =>
+              props.deletePost(
+                props.post_id,
+                props.userId,
+                setDeleteTweet,
+                navigate
+              )
+            }
+          >
             <DeleteOutlined />
             <p style={{ fontSize: "14px" }}>Delete</p>
           </div>
@@ -144,17 +117,21 @@ const Post = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    // imageURL: state.imageURL,
-    // username: state.username,
     userId: state.userId,
     error: state.error,
-    token: state.token,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deletePost: () => dispatch({ type: "TWEET_DELETE" }),
+    authFail: (error) => dispatch(actions.authFail(error)),
+    deletePost: (postId, userId, setDeleteTweet, navigate) => {
+      dispatch(actions.deletePost(postId, userId, setDeleteTweet, navigate));
+    },
+    editPost: (postId, userId, tweetContent, setEditTweet, navigate) =>
+      dispatch(
+        actions.editPost(postId, userId, tweetContent, setEditTweet, navigate)
+      ),
   };
 };
 
